@@ -21,11 +21,12 @@ import com.geeklub.vass.utils.Regex;
 
 
 public class MainActivity extends Activity {
-	/**表示关闭程序*/
+	
 	protected static final int USEFUL = 1 ;
 	protected static final int UNUSEFUL = 0;
 	private static final int UNKNOW = -1;
-	/***/
+	protected static final int EMPTY = 2;
+	
 
 
 
@@ -41,14 +42,17 @@ public class MainActivity extends Activity {
 			case USEFUL:ShutDownProgress("密码有效，不用重新发送短信");
 
 			break;
-			
+
 			case UNKNOW:ShutDownProgress("闪讯管家发生了错误");
 			break;
-			
+
 			case UNUSEFUL:ShutDownProgress("密码无效，正在发送查询短信");
 			break;
 			
-			
+			case EMPTY:ShutDownProgress("当前没有密码，发送查询短信");
+			break;
+
+
 
 			default:
 				break;
@@ -87,7 +91,7 @@ public class MainActivity extends Activity {
 
 
 	private void atuostart() {
-		int isEffect = 0;
+		int isEffect = 2;
 		if(smart()==null){
 			Log.i("短信为空", "短信记录中还没有闪讯服务器端返回的短信");
 			SendMessageTo_Server(MainActivity.this);
@@ -100,18 +104,18 @@ public class MainActivity extends Activity {
 			String sms_time = Regex.SelectDate(smart().getBody());
 			System.out.println("密码的截止时间是"+sms_time);
 			//			
-			 isEffect = CheckUtils.compare_date(current_time, sms_time, MainActivity.this);
+			isEffect = CheckUtils.compare_date(current_time, sms_time, MainActivity.this);
 			System.out.println("ISEffect的值是："+isEffect);
 			//短信密码过期了，无效的密码，发送短信
 			if(isEffect==0){
 				Log.i("短信密码已过期，是无效的", "正在发送新的短信");
 				SendMessageTo_Server(MainActivity.this);
 			}
-			
-		
+
+
 		}	
 
-		
+
 		Waitfor_Restart(MainActivity.this,isEffect);	
 
 	}
@@ -180,7 +184,7 @@ public class MainActivity extends Activity {
 					shutdown.sendMessage(msg);
 
 				} catch (InterruptedException e) {
-					
+
 					e.printStackTrace();
 				}
 
@@ -196,7 +200,7 @@ public class MainActivity extends Activity {
 	 * 
 	 */
 	private void SendMessageTo_Server(final Context context) {
-//		Toast.makeText(context, "正在发送短信。。。", Toast.LENGTH_SHORT).show();
+		//		Toast.makeText(context, "正在发送短信。。。", Toast.LENGTH_SHORT).show();
 		Log.e("Resend", "发送短信中");
 
 		new Thread(){
@@ -205,7 +209,7 @@ public class MainActivity extends Activity {
 					//发送查询短信
 					smsManager.sendTextMessage("106593005", null, "MM", null, null);
 					Log.i("Resend", "发送短信到106593005");
-					Thread.sleep(5000);
+					Thread.sleep(9000);
 
 					String sms_time = Regex.SelectDate(smart().getBody());
 					Log.d("短信密码的截止时间是：", sms_time);

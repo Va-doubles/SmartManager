@@ -40,6 +40,7 @@ public class CheckUtils {
 				//获取下次开启程序的时间间隔
 				Next_RESERT_TIME = sms_date.getTime() + 60000-current_time;
 				AlarmClock(context, Next_RESERT_TIME);
+				Log.e("下次的重启时间间隔", Next_RESERT_TIME/3600000+"小");
 				return 1;
 			}
 
