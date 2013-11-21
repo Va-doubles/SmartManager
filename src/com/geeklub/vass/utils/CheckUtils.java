@@ -24,26 +24,27 @@ public class CheckUtils {
 	 * @return   
 	 * 返回0，表示要重新发送短信
 	 * 返回1,表示密码没有失效，不需要发送查询短信
+	 * 返回-1，表示发生未知错误，
 	 */
 
 	public static int compare_date(Long current_time,String sms_time,Context context){
 		java.text.DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try{
 
-			Date dt2 = df.parse(sms_time);
+			Date sms_date = df.parse(sms_time);
 
-			Log.i("compare_date", "短信的截止时间是"+dt2.getTime());
 			//如果当前的时间大于密码的截止时间，返回0
-			if(current_time>dt2.getTime())
+			if(current_time>sms_date.getTime())
 				return 0;
 			else{
 				//获取下次开启程序的时间间隔
-				Next_RESERT_TIME = dt2.getTime() + 60000-current_time;
+				Next_RESERT_TIME = sms_date.getTime() + 60000-current_time;
 				AlarmClock(context, Next_RESERT_TIME);
 				return 1;
 			}
 
 		}catch(Exception e){
+//			出现未知错误
 			return -1;
 
 		}
